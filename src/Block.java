@@ -5,10 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Block extends Entity implements Drawable {
-    private int x;
-    private int y;
-    private int width;
-    private int height;
+
     private BufferedImage texture;
 
     public Block(int x, int y) {

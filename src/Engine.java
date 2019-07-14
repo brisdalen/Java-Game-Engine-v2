@@ -156,7 +156,7 @@ public class Engine extends Timer {
      */
 
     private void checkPlayer(Player player, Window.DrawPanel drawPanel) {
-        player.getInputs();
+        getPlayerInputs();
 
         int x = player.getX();
         int y = player.getY();
@@ -183,25 +183,48 @@ public class Engine extends Timer {
                 getBigClipX2(), getBigClipY2());
     }
 
-    public int getNewDirection(int x, int y, int width, int height) {
-        int direction = 0;
-        //Typ 1 og 2
-        if(height > width) {
-            if(x - width < currentWindowWidth/2) {
-                direction = 2;
-            } else {
-                direction = 0;
-            }
-            //Typ 0
-        } else {
-            if(y - height < currentWindowHeight/2) {
-                direction = 3;
-            } else {
-                direction = 1;
+    /*
+     *  Player input
+     */
+    public void getPlayerInputs() {
+        if(player.getController().left) {
+            player.changeDirection(0);
+            if(!checkCollision()) {
+                player.setX(player.getX() - player.getMovementSpeed());
             }
         }
+        if(player.getController().up) {
+            player.changeDirection(1);
+            if(!checkCollision()) {
+                player.setY(player.getY() - player.getMovementSpeed());
+            }
+        }
+        if(player.getController().right) {
+            player.changeDirection(2);
+            // HUSK å sjekke collision med avstanden du planlegger å reise
+            int distance = player.getX() + player.getMovementSpeed();
+            if(!checkCollision()) {
+                player.setX(player.getX() + player.getMovementSpeed());
+            }
+        }
+        if(player.getController().down) {
+            player.changeDirection(3);
+            if(!checkCollision()) {
+                player.setY(player.getY() + player.getMovementSpeed());
+            }
+        }
+        if(player.getController().k) {
+            // Instantly kill the player
+            player.setHealth(0);
+            stop();
+            drawPanel.updateParentFrameButton();
+        }
+    }
 
-        return direction;
+    private boolean checkCollision() {
+        for(Entity e : entities) {
+            return player.isCollidingWith(e);
+        }
     }
 
     public void win() {

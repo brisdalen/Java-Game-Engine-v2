@@ -13,6 +13,8 @@ public class Player extends Entity implements Drawable {
     private Engine engine;
     private int maxHealth = 1000;
 
+    private Rectangle src;
+
     private boolean isKinematic = false;
     private float gravity = 3.2f;
 
@@ -47,6 +49,49 @@ public class Player extends Entity implements Drawable {
 
         if(health > maxHealth) {
             health = maxHealth;
+        }
+    }
+
+    public boolean isCollidingWith(Entity e) {
+        src = new Rectangle(this.x, this.y, this.width, this.height);
+        Rectangle other = new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+        return src.intersects(other);
+    }
+
+    public void reset() {
+        x = startX;
+        y = startY;
+        direction = 2;
+        health = startHealth;
+    }
+
+    public void takeDamage(int damage) {
+        if(health - damage >= 0 + damage) {
+            health -= damage;
+        } else {
+            health = 0;
+        }
+    }
+    public void takeDamage() {
+        if(health - fixedDamageAmount >= 0 + fixedDamageAmount) {
+            health -= fixedDamageAmount;
+        } else {
+            health = 0;
+        }
+    }
+
+    public void heal(int healAmount) {
+        if(health + healAmount <= maxHealth - healAmount) {
+            health += healAmount;
+        } else {
+            health = 1000;
+        }
+    }
+    public void heal() {
+        if(health + fixedHealAmount <= maxHealth - fixedHealAmount) {
+            health += fixedHealAmount;
+        } else {
+            health = 1000;
         }
     }
 
@@ -150,73 +195,6 @@ public class Player extends Entity implements Drawable {
     public void setColor(Color color) {
         this.color = color;
     }
-
-    /*
-     *  Player input
-     *  TODO: Burde dette håndteres i Engine?
-     */
-    public void getInputs() {
-        if(controller.left) {
-            changeDirection(0);
-            x -= movementSpeed;
-        }
-        if(controller.up) {
-            changeDirection(1);
-            y -= movementSpeed;
-        }
-        if(controller.right) {
-            changeDirection(2);
-            x += movementSpeed;
-        }
-        if(controller.down) {
-            changeDirection(3);
-            y += movementSpeed;
-        }
-        if(controller.k) {
-            // Instantly kill the player
-            health = 0;
-            engine.stop();
-            engine.drawPanel.updateParentFrameButton();
-        }
-    }
-
-    public void reset() {
-        x = startX;
-        y = startY;
-        direction = 2;
-        health = startHealth;
-    }
-
-    public void takeDamage(int damage) {
-        if(health - damage >= 0 + damage) {
-            health -= damage;
-        } else {
-            health = 0;
-        }
-    }
-    public void takeDamage() {
-        if(health - fixedDamageAmount >= 0 + fixedDamageAmount) {
-            health -= fixedDamageAmount;
-        } else {
-            health = 0;
-        }
-    }
-
-    public void heal(int healAmount) {
-        if(health + healAmount <= maxHealth - healAmount) {
-            health += healAmount;
-        } else {
-            health = 1000;
-        }
-    }
-    public void heal() {
-        if(health + fixedHealAmount <= maxHealth - fixedHealAmount) {
-            health += fixedHealAmount;
-        } else {
-            health = 1000;
-        }
-    }
-
 
     public void draw(Graphics g) {
         g.setColor(color);
