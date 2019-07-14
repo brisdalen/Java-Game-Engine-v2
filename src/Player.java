@@ -1,7 +1,8 @@
 import java.awt.*;
 
 public class Player extends Entity implements Drawable {
-    private int x, y, width, height, startX, startY;
+    private int startX;
+    private int startY;
     private int direction = 2; // 0 = left, 1 = up, 2 = right, 3 = down
     private int startHealth = 1000;
     private int health = startHealth;
@@ -52,38 +53,6 @@ public class Player extends Entity implements Drawable {
     /*
      * Getters and setters
      */
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
     public int getStartX() {
         return startX;
     }
@@ -105,7 +74,7 @@ public class Player extends Entity implements Drawable {
     }
 
     public void changeDirection(int direction) {
-        if (direction > 0 && direction <= 3) {
+        if (direction >= 0 && direction <= 3) {
             this.direction = direction;
         }
     }

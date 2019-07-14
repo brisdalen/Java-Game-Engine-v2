@@ -47,6 +47,14 @@ public class Engine extends Timer {
 
         entities.add(player);
 
+        entities.add(new Block(0, drawPanel.getHeight()-100));
+        entities.add(new Block(50, drawPanel.getHeight()-100));
+        entities.add(new Block(100, drawPanel.getHeight()-100));
+
+        entities.add(new SolidBlock(150, drawPanel.getHeight()-100));
+        entities.add(new SolidBlock(200, drawPanel.getHeight()-100));
+        entities.add(new SolidBlock(250, drawPanel.getHeight()-100));
+
         init(beforeStart);
     }
 

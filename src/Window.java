@@ -12,6 +12,7 @@ public class Window extends JFrame {
     public int currentWindowWidth;
     public int currentWindowHeight;
     public static final Color CANVAS_BG_COLOR = new Color(120, 80, 120);
+    public static final int SCALE = 50;
 
     private boolean first = true;
 
@@ -56,7 +57,7 @@ public class Window extends JFrame {
         currentWindowHeight = drawPanel.getHeight();
 
         engine = new Engine(drawPanel,
-                new Player(CANVAS_WIDTH / 2 - 10, CANVAS_HEIGHT / 2 - 10, 20, 20));
+                new Player(CANVAS_WIDTH / 2 - 10, CANVAS_HEIGHT / 2 - 10, 20, 20), true);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.getAllFonts();
@@ -160,12 +161,13 @@ public class Window extends JFrame {
             }
 
             for(Entity e : engine.getEntities()) {
-                if(e instanceof Drawable) {
+                if(e instanceof Drawable && !(e instanceof Player)) {
                     ((Drawable) e).draw(g);
                 }
             }
-
-            //engine.getPlayer().draw(g);
+            // Gjør player-rendering etterpå for å tegne spilleren over andre ting,
+            // men det finnes sikkert en bedre z-buffer løsning
+            engine.getPlayer().draw(g);
             engine.getPlayer().paintHealthbar(g, currentWindowWidth / 23, currentWindowHeight / 17,
                     currentWindowWidth / 4, currentWindowHeight / 13);
 

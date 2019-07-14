@@ -12,12 +12,16 @@ public class Block extends Entity implements Drawable {
     private BufferedImage texture;
 
     public Block(int x, int y) {
+        this(x, y, "res/block-default.png");
+    }
+
+    public Block(int x, int y, String texturePath) {
         this.x = x;
         this.y = y;
-        this.width = 1;
-        this.height = 1;
+        this.width = 1 * Window.SCALE;
+        this.height = 1 * Window.SCALE;
         try {
-            this.texture = ImageIO.read(new File("../res/block-default.png"));
+            this.texture = ImageUtility.resize(ImageIO.read(new File(texturePath)), width, height);
         } catch (IOException e) {
             e.printStackTrace();
         }
