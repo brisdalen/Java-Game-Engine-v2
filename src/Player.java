@@ -1,6 +1,6 @@
 import java.awt.*;
 
-public class Player implements Drawable {
+public class Player extends Entity implements Drawable {
     private int x, y, width, height, startX, startY;
     private int direction = 2; // 0 = left, 1 = up, 2 = right, 3 = down
     private int startHealth = 1000;
@@ -11,6 +11,9 @@ public class Player implements Drawable {
     private Controller controller;
     private Engine engine;
     private int maxHealth = 1000;
+
+    private boolean isKinematic = false;
+    private float gravity = 3.2f;
 
     private int fixedHealAmount = 50;
     private int fixedDamageAmount = 50;
@@ -24,6 +27,21 @@ public class Player implements Drawable {
         this.startY = y;
         this.width = width;
         this.height = height;
+        this.controller = new Controller(this);
+
+        if(health > maxHealth) {
+            health = maxHealth;
+        }
+    }
+
+    public Player(int x, int y, int width, int height, boolean isKinematic) {
+        this.x = x;
+        this.y = y;
+        this.startX = x;
+        this.startY = y;
+        this.width = width;
+        this.height = height;
+        this.isKinematic = isKinematic;
         this.controller = new Controller(this);
 
         if(health > maxHealth) {
@@ -136,7 +154,7 @@ public class Player implements Drawable {
         return engine;
     }
 
-    public void setEngine(Engine engine) {
+    public void addEngine(Engine engine) {
         this.engine = engine;
     }
 
@@ -146,6 +164,14 @@ public class Player implements Drawable {
 
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
+    }
+
+    public boolean isKinematic() {
+        return isKinematic;
+    }
+
+    public void setKinematic(boolean kinematic) {
+        isKinematic = kinematic;
     }
 
     public Color getColor() {

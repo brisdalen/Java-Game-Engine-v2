@@ -41,7 +41,7 @@ public class Controller implements KeyListener {
                 k = true;
                 break;
             case KeyEvent.VK_SHIFT:
-                player.movementSpeed = 2;
+                player.setMovementSpeed(2);
                 break;
         }
     }
@@ -65,7 +65,7 @@ public class Controller implements KeyListener {
                 k = false;
                 break;
             case KeyEvent.VK_SHIFT:
-                player.movementSpeed = player.movementSpeedStart;
+                player.setMovementSpeed(player.getMovementSpeedStart());
                 break;
         }
     }

@@ -36,6 +36,7 @@ public class Window extends JFrame {
 
         drawPanel = new DrawPanel(this);
         drawPanel.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+        drawPanel.setBackground(CANVAS_BG_COLOR);
         JPanel labelPanel = new JPanel(new FlowLayout());
         labelPanel.add(new JLabel("Use the Arrow Keys or WASD to move. Hold shift to move slow. " +
                 "Stay on the healing pods to get points!"));
@@ -62,7 +63,7 @@ public class Window extends JFrame {
 
         font = new Font("SukhumvitSet-Thin", Font.PLAIN, 35);
 
-        addKeyListener(engine.getPlayer().controller);
+        addKeyListener(engine.getPlayer().getController());
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -72,6 +73,8 @@ public class Window extends JFrame {
                 currentWindowHeight = r.height;
             }
         });
+
+        engine.loadLevel("../level1.txt");
 
         setVisible(true);
         requestFocus();
@@ -132,7 +135,7 @@ public class Window extends JFrame {
         }
 
         public void updateParentFrameButton() {
-            if (engine.player.health <= 0) {
+            if (engine.getPlayer().getHealth() <= 0) {
                 setButtonToReset(window.startGameButton);
             }
         }
@@ -140,7 +143,6 @@ public class Window extends JFrame {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            setBackground(CANVAS_BG_COLOR);
 
             /**
              * Opptimalisere "Death message" ved å sette mest mulig med en gang
@@ -157,14 +159,20 @@ public class Window extends JFrame {
                 first = false;
             }
 
-            engine.getPlayer().paint(g);
+            for(Entity e : engine.getEntities()) {
+                if(e instanceof Drawable) {
+                    ((Drawable) e).draw(g);
+                }
+            }
+
+            //engine.getPlayer().draw(g);
             engine.getPlayer().paintHealthbar(g, currentWindowWidth / 23, currentWindowHeight / 17,
                     currentWindowWidth / 4, currentWindowHeight / 13);
 
             repaint(currentWindowWidth / 23, currentWindowHeight / 17,
                     currentWindowWidth / 4, currentWindowHeight / 13);
 
-            if (engine.getPlayer().health == 0) {
+            if (engine.getPlayer().getHealth() == 0) {
                 g.setColor(Color.black);
                 g.drawString("YOU'RE DEAD.", fontX, fontY);
                 repaint();

@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Engine extends Timer {
+    public ArrayList<Entity> entities;
 
     public Window.DrawPanel drawPanel;
     public Player player;
@@ -22,10 +23,20 @@ public class Engine extends Timer {
     /**
      *
      * @param drawPanel The panel to update and repaint.
+     * @param player The player to affect and get movement from.
+     */
+    public Engine(Window.DrawPanel drawPanel, Player player) {
+        this(drawPanel, player, false);
+    }
+    /**
+     *
+     * @param drawPanel The panel to update and repaint.
      * @param player The player to affect and get movement from. (TODO: Multiplayer solution?)
      * @param beforeStart Should the player be able to move before the start method has been called.
      */
     public Engine(Window.DrawPanel drawPanel, Player player, boolean beforeStart) {
+        entities = new ArrayList<>();
+
         this.drawPanel = drawPanel;
         this.currentWindowWidth = drawPanel.getWidth();
         this.currentWindowHeight = drawPanel.getHeight();
@@ -33,6 +44,8 @@ public class Engine extends Timer {
 
         this.player = player;
         player.addEngine(this);
+
+        entities.add(player);
 
         init(beforeStart);
     }
@@ -120,29 +133,41 @@ public class Engine extends Timer {
         //hasStarted = false;
     }
 
+    public void saveLevel(String path) {
+        //TODO: Lage metode for å lagre levels
+    }
+
+    public void loadLevel(String path) {
+        //TODO: Lage metode for å loade levels
+        System.out.println("engine load: " + path.substring(path.indexOf("/")+1, path.length()-4));
+    }
+
     /*
     Player input
     Collision
-    Spawn
-    Clear
      */
 
     private void checkPlayer(Player player, Window.DrawPanel drawPanel) {
         player.getInputs();
 
-        if (player.x <= 0) {
-            player.x = 0;
+        int x = player.getX();
+        int y = player.getY();
+        int width = player.getWidth();
+        int height = player.getHeight();
+
+        if (x <= 0) {
+            player.setX(0);
         }
-        if (player.x + player.width >= currentWindowWidth) {
-            player.x = currentWindowWidth - player.width - 1;
+        if (x + width >= currentWindowWidth) {
+            player.setX(currentWindowWidth - width - 1);
         }
-        if (player.y <= 0) {
-            player.y = 0;
+        if (y <= 0) {
+            player.setY(0);
         }
-        if (player.y + player.height >= currentWindowHeight) {
-            player.y = currentWindowHeight - player.height - 1;
+        if (y + height >= currentWindowHeight) {
+            player.setHeight(currentWindowHeight - height - 1);
         }
-        if(player.health <= 0) {
+        if(player.getHealth() <= 0) {
             stop();
         }
 
@@ -179,16 +204,20 @@ public class Engine extends Timer {
         return player;
     }
 
+    public ArrayList<Entity> getEntities() {
+        return entities;
+    }
+
     public int getBigClipX1() {
-        return player.x - player.width*2;
+        return player.getX() - player.getWidth()*2;
     }
     public int getBigClipX2() {
-        return player.width*6;
+        return player.getWidth()*6;
     }
     public int getBigClipY1() {
-        return player.y - player.height*2;
+        return player.getY() - player.getHeight()*2;
     }
     public int getBigClipY2() {
-        return player.height*6;
+        return player.getHeight()*6;
     }
 }
