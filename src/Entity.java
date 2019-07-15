@@ -5,6 +5,8 @@ public abstract class Entity {
     protected int width;
     protected int height;
 
+    protected boolean isKinematic = false;
+
     public Entity() { }
 
     /*

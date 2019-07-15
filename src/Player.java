@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class Player extends Entity implements Drawable {
     private int startX;
@@ -14,9 +16,6 @@ public class Player extends Entity implements Drawable {
     private int maxHealth = 1000;
 
     private Rectangle src;
-
-    private boolean isKinematic = false;
-    private float gravity = 3.2f;
 
     private int fixedHealAmount = 50;
     private int fixedDamageAmount = 50;
@@ -52,10 +51,21 @@ public class Player extends Entity implements Drawable {
         }
     }
 
-    public boolean isCollidingWith(Entity e) {
-        src = new Rectangle(this.x, this.y, this.width, this.height);
-        Rectangle other = new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-        return src.intersects(other);
+    public boolean isCollidingWithNewPos(Point newPos, ArrayList<Entity> entities) {
+        boolean hit = false;
+        for(int i = 0; i < entities.size(); i++) {
+            Entity e = entities.get(i);
+            if(e instanceof SolidBlock) {
+                src = new Rectangle(newPos.x, newPos.y, this.width, this.height);
+                Rectangle other = new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+
+                if(src.intersects(other)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     public void reset() {

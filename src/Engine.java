@@ -1,3 +1,5 @@
+import javax.swing.text.Position;
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,10 +17,16 @@ public class Engine extends Timer {
     public int startTime = -20;
     public int totalTime = startTime;
 
+    private boolean gravity = false;
+
     public boolean running = false;
     public boolean hasStarted = false;
     public static boolean hasLost = false;
     public boolean resetPrompt = false;
+
+    public static final float GRAVITY = 2f;
+
+    private Point newPos;
 
     /**
      *
@@ -28,6 +36,7 @@ public class Engine extends Timer {
     public Engine(Window.DrawPanel drawPanel, Player player) {
         this(drawPanel, player, false);
     }
+
     /**
      *
      * @param drawPanel The panel to update and repaint.
@@ -35,15 +44,27 @@ public class Engine extends Timer {
      * @param beforeStart Should the player be able to move before the start method has been called.
      */
     public Engine(Window.DrawPanel drawPanel, Player player, boolean beforeStart) {
+        this(drawPanel, player, beforeStart, false);
+    }
+    /**
+     *
+     * @param drawPanel The panel to update and repaint.
+     * @param player The player to affect and get movement from. (TODO: Multiplayer solution?)
+     * @param beforeStart Should the player be able to move before the start method has been called.
+     * @param gravity Should gravity be activated by default
+     */
+    public Engine(Window.DrawPanel drawPanel, Player player, boolean beforeStart, boolean gravity) {
         entities = new ArrayList<>();
 
         this.drawPanel = drawPanel;
         this.currentWindowWidth = drawPanel.getWidth();
         this.currentWindowHeight = drawPanel.getHeight();
         this.randomer = new Random();
+        this.gravity = gravity;
 
         this.player = player;
         player.addEngine(this);
+        player.setKinematic(gravity);
 
         entities.add(player);
 
@@ -54,12 +75,14 @@ public class Engine extends Timer {
         entities.add(new SolidBlock(150, drawPanel.getHeight()-100));
         entities.add(new SolidBlock(200, drawPanel.getHeight()-100));
         entities.add(new SolidBlock(250, drawPanel.getHeight()-100));
+        entities.add(new SolidBlock(370, drawPanel.getHeight()-100));
 
         init(beforeStart);
     }
 
     public void init(boolean beforeStart) {
         running = true;
+        System.out.println(gravity);
         /**
          * Get player input and check for out-of-bounds before the start method has been called.
          */
@@ -69,6 +92,9 @@ public class Engine extends Timer {
                 public void run() {
                     if (!hasLost && !hasStarted) {
                         checkPlayer(player, drawPanel);
+                        if(gravity) {
+                            playerGravity();
+                        }
                     } else {
                         // Cancel thread when no longer needed
                         this.cancel();
@@ -87,6 +113,9 @@ public class Engine extends Timer {
             public void run() {
                 if(!hasLost) {
                     checkPlayer(player, drawPanel);
+                    if(gravity) {
+                        playerGravity();
+                    }
                 }
                 //If you lost, and resetPrompt has not been displayed yet
                 if(hasLost && !resetPrompt) {
@@ -189,28 +218,30 @@ public class Engine extends Timer {
     public void getPlayerInputs() {
         if(player.getController().left) {
             player.changeDirection(0);
-            if(!checkCollision()) {
-                player.setX(player.getX() - player.getMovementSpeed());
+            newPos = new Point(player.getX() - player.getMovementSpeed(), player.getY());
+            if(!checkPlayerCollision(newPos)) {
+                player.setX(newPos.x);
             }
         }
         if(player.getController().up) {
             player.changeDirection(1);
-            if(!checkCollision()) {
-                player.setY(player.getY() - player.getMovementSpeed());
+            newPos = new Point(player.getX(), player.getY() - player.getMovementSpeed());
+            if(!checkPlayerCollision(newPos)) {
+                player.setY(newPos.y);
             }
         }
         if(player.getController().right) {
             player.changeDirection(2);
-            // HUSK å sjekke collision med avstanden du planlegger å reise
-            int distance = player.getX() + player.getMovementSpeed();
-            if(!checkCollision()) {
-                player.setX(player.getX() + player.getMovementSpeed());
+            newPos = new Point(player.getX() + player.getMovementSpeed(), player.getY());
+            if(!checkPlayerCollision(newPos)) {
+                player.setX(newPos.x);
             }
         }
         if(player.getController().down) {
             player.changeDirection(3);
-            if(!checkCollision()) {
-                player.setY(player.getY() + player.getMovementSpeed());
+            newPos = new Point(player.getX(), player.getY() + player.getMovementSpeed());
+            if(!checkPlayerCollision(newPos)) {
+                player.setY(newPos.y);
             }
         }
         if(player.getController().k) {
@@ -221,10 +252,19 @@ public class Engine extends Timer {
         }
     }
 
-    private boolean checkCollision() {
+    private void playerGravity() {
         for(Entity e : entities) {
-            return player.isCollidingWith(e);
+            if(e.isKinematic) {
+                Point newPos = new Point(player.getX(), player.getY() + (int) GRAVITY);
+                if(!checkPlayerCollision(newPos)) {
+                    player.setY(newPos.y);
+                }
+            }
         }
+    }
+
+    private boolean checkPlayerCollision(Point newPos) {
+        return player.isCollidingWithNewPos(newPos, entities);
     }
 
     public void win() {

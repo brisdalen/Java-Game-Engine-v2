@@ -13,10 +13,15 @@ public class Block extends Entity implements Drawable {
     }
 
     public Block(int x, int y, String texturePath) {
+        this(x, y, texturePath, false);
+    }
+
+    public Block(int x, int y, String texturePath, boolean isKinematic) {
         this.x = x;
         this.y = y;
         this.width = 1 * Window.SCALE;
         this.height = 1 * Window.SCALE;
+        this.isKinematic = isKinematic;
         try {
             this.texture = ImageUtility.resize(ImageIO.read(new File(texturePath)), width, height);
         } catch (IOException e) {

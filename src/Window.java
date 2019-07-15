@@ -57,7 +57,7 @@ public class Window extends JFrame {
         currentWindowHeight = drawPanel.getHeight();
 
         engine = new Engine(drawPanel,
-                new Player(CANVAS_WIDTH / 2 - 10, CANVAS_HEIGHT / 2 - 10, 20, 20), true);
+                new Player(CANVAS_WIDTH / 2 - 10, CANVAS_HEIGHT / 2 - 10, 20, 20), true, true);
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.getAllFonts();
