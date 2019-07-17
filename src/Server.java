@@ -9,6 +9,7 @@ public class Server {
 
     public Server(int port) throws IOException {
         server = new ServerSocket(port);
+        server.setSoTimeout(15000);
     }
 
     public ServerSocket getServer() {
