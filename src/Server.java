@@ -1,32 +1,41 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
 
-    private ServerSocket[] sockets;
-
-    private ServerSocket server;
-
     public Server(int port) throws IOException {
-        server = new ServerSocket(port);
-        server.setSoTimeout(15000);
-    }
+        System.out.println("Attempting to recieve client-connecting...");
+        try (
+            ServerSocket serverSocket = new ServerSocket(port);
+            Socket clientSocket = serverSocket.accept();
 
-    public ServerSocket getServer() {
-        return server;
-    }
+            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
+        ) {
+            System.out.println("Client successfully connected to server.");
+            String inputLine, outputLine;
+            //while ((inputLine = in.readLine()) != null) {
+            while(true) {
+                inputLine = in.readLine();
+                outputLine = "Message recieved.";
 
-    /* TODO: Finne ut av multiple connections senere
-    public Server(int numOfSockets, int port) {
-        this.sockets = new ServerSocket[numOfSockets];
-        for(int i = 0; i < numOfSockets; i++) {
-            try {
-                sockets[i] = new ServerSocket(port);
-            } catch (IOException e) {
-                e.printStackTrace();
+                // Calculate movements and such
+                //TODO: Figure shit out
+
+                // Return info for graphics and such
+                out.println(outputLine);
+                System.out.println(inputLine);
             }
+        } catch (IOException e) {
+            System.out.println("Exception caught when trying to listen on port "
+                    + 6070 + " or listening for a connection");
+            System.out.println(e.getMessage());
         }
+    }
 
-        System.out.println(sockets[0].getLocalPort());
-    }*/
 }
