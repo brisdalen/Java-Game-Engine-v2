@@ -8,21 +8,33 @@ public class Client {
     public Client(String hostName, int port) {
         try (
             Socket echoSocket = new Socket(hostName, port);
-            PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+            DataOutputStream out = new DataOutputStream(echoSocket.getOutputStream());
+            DataInputStream in = new DataInputStream(echoSocket.getInputStream());
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
             System.out.println("Successfully connected to server.");
-            String userInput;
+            int[] userInput;
             //while ((userInput = stdIn.readLine()) != null) {
             while(true) {
                 // Get player info and movement, send it to the output stream
-                userInput = stdIn.readLine();
-                out.println(userInput);
+                System.out.println("Enter int 1");
+                int int1 = Integer.parseInt(stdIn.readLine());
+                System.out.println("Enter int 2");
+                int int2 = Integer.parseInt(stdIn.readLine());
+
+
+                userInput = new int[]{int1, int2};
+                System.out.println("Trying to write...");
+                out.writeInt(userInput.length);
+                for(int i = 0; i < userInput.length; i++) {
+                    System.out.println("int: " + userInput[i]);
+                    out.writeInt(userInput[i]);
+                }
 
                 // Read the server data and do things accordingly.
                 //TODO: figure this out
-                System.out.println(in.readLine());
+                int result = in.readInt();
+                System.out.println("recieved from server: " + result + "\n");
 
             }
         } catch (UnknownHostException e) {
