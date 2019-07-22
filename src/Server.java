@@ -15,26 +15,18 @@ public class Server {
                 BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
             System.out.println("Client successfully connected to server.");
-            int inputLine = 0;
-            int outputLine;
+            String inputLine, outputLine;
             //while ((inputLine = in.readLine()) != null) {
             while(true) {
-                System.out.println("Attempting to read ints...");
-                int length = in.readInt();
-                System.out.println("length: " + length);
-                for(int i = 0; i < length; i++) {
-                    int temp = in.readInt();
-                    System.out.println(i + " : " + temp);
-                    inputLine += temp;
-                }
+                inputLine = in.readUTF();
 
                 System.out.println("input: " + inputLine);
                 outputLine = inputLine;
 
-                // Calculate movements and such
-                //TODO: Figure this out
-                // Return info for graphics and such
-                out.writeInt(outputLine);
+                // Calculate movements
+                // Return info for graphics
+                outputLine = processInput(inputLine);
+                out.writeUTF(outputLine);
                 System.out.println("send to client: " + outputLine + "\n");
             }
         } catch (IOException e) {
@@ -42,6 +34,21 @@ public class Server {
                     + 6070 + " or listening for a connection");
             System.out.println(e.getMessage());
         }
+    }
+
+    public String processInput(String input) {
+        String output;
+        int leftPar = input.indexOf("(");
+
+        switch(input.substring(0, leftPar)) {
+            case "MOV": output = "x + " + input.substring(leftPar+1, input.indexOf(","));
+                break;
+
+            default: output = "Unrecognized input.";
+                break;
+        }
+
+        return output;
     }
 
 }
