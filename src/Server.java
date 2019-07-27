@@ -9,6 +9,10 @@ public class Server {
 
     DataOutputStream out;
     DataInputStream in;
+
+    ObjectOutputStream objectOut;
+    ObjectInputStream objectIn;
+
     BufferedReader stdIn;
 
     public Server(int port) throws IOException {
@@ -20,9 +24,13 @@ public class Server {
 
             out = new DataOutputStream(clientSocket.getOutputStream());
             in = new DataInputStream(clientSocket.getInputStream());
+
+            objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
+            objectIn = new ObjectInputStream(clientSocket.getInputStream());
+
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            System.out.println("Client successfully connected to server.");
+            System.out.println("Client successfully connected to server.\n");
             String inputLine, outputLine;
             //while ((inputLine = in.readLine()) != null) {
             while(true) {

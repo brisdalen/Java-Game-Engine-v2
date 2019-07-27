@@ -13,8 +13,13 @@ public class Client {
 
         try (
             Socket clientSocket = new Socket(hostName, port);
+
             DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
             DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+
+            ObjectOutputStream objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream objectIn = new ObjectInputStream(clientSocket.getInputStream());
+
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
         ) {
             System.out.println("Successfully connected to server.");
