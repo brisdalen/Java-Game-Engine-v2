@@ -5,7 +5,12 @@ import java.net.UnknownHostException;
 
 public class Client {
 
+    Player player;
+
     public Client(String hostName, int port) {
+
+        player = new Player(Window.CANVAS_WIDTH / 2 - 10, Window.CANVAS_HEIGHT / 2 - 10, 20, 20);
+
         try (
             Socket clientSocket = new Socket(hostName, port);
             DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());

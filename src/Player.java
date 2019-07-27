@@ -3,6 +3,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Player extends Entity implements Drawable {
+    private Color color;
     private int startX;
     private int startY;
     private int direction = 2; // 0 = left, 1 = up, 2 = right, 3 = down
@@ -20,29 +21,29 @@ public class Player extends Entity implements Drawable {
     private int fixedHealAmount = 50;
     private int fixedDamageAmount = 50;
 
-    private Color color = new Color(180, 45, 50);
+    public static Color defaultColor = new Color(180, 45, 50);
 
     public Player(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.startX = x;
-        this.startY = y;
-        this.width = width;
-        this.height = height;
-        this.controller = new Controller(this);
+        this(x, y, width, height, defaultColor, false);
+    }
 
-        if(health > maxHealth) {
-            health = maxHealth;
-        }
+    public Player(int x, int y, int width, int height, Color color) {
+        this(x, y, width, height, false);
+        this.color = color;
     }
 
     public Player(int x, int y, int width, int height, boolean isKinematic) {
+        this(x, y, width, height, defaultColor, isKinematic);
+    }
+
+    public Player(int x, int y, int width, int height, Color color, boolean isKinematic) {
         this.x = x;
         this.y = y;
         this.startX = x;
         this.startY = y;
         this.width = width;
         this.height = height;
+        this.color = color;
         this.isKinematic = isKinematic;
         this.controller = new Controller(this);
 
