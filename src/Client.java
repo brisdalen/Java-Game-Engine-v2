@@ -24,6 +24,10 @@ public class Client {
                 // Get player info and movement, send it to the output stream
                 userInput = stdIn.readLine().toUpperCase();
 
+                if(userInput.trim().equalsIgnoreCase("bye")) {
+                    break;
+                }
+
                 System.out.println("Trying to write...");
                 out.writeUTF(userInput);
 
@@ -31,8 +35,6 @@ public class Client {
                 //TODO: figure this out
                 String result = in.readUTF();
                 System.out.println("recieved from server: " + result + "\n");
-
-                break;
             }
 
             System.exit(0);

@@ -4,16 +4,24 @@ import java.net.Socket;
 
 public class Server {
 
+    ServerSocket serverSocket;
+    Socket clientSocket;
+
+    DataOutputStream out;
+    DataInputStream in;
+    BufferedReader stdIn;
+
     public Server(int port) throws IOException {
         System.out.println("Attempting to recieve client-connecting...");
-        try (
-                ServerSocket serverSocket = new ServerSocket(port);
-                Socket clientSocket = serverSocket.accept();
 
-                DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
-                DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-                BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))
-        ) {
+        try {
+            serverSocket = new ServerSocket(port);
+            clientSocket = serverSocket.accept();
+
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            in = new DataInputStream(clientSocket.getInputStream());
+            stdIn = new BufferedReader(new InputStreamReader(System.in));
+
             System.out.println("Client successfully connected to server.");
             String inputLine, outputLine;
             //while ((inputLine = in.readLine()) != null) {
@@ -42,6 +50,9 @@ public class Server {
 
         switch(input.substring(0, leftPar)) {
             case "MOV": output = "x + " + input.substring(leftPar+1, input.indexOf(","));
+                break;
+
+            case "REQ_ENT": output = "Attempting to send entities...";
                 break;
 
             default: output = "Unrecognized input.";
