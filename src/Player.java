@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -13,7 +14,6 @@ public class Player extends Entity implements Drawable {
     private int movementSpeed = 4;
     // Is this bad coupling?
     private Controller controller;
-    private Engine engine;
     private int maxHealth = 1000;
 
     private Rectangle src;
@@ -173,14 +173,6 @@ public class Player extends Entity implements Drawable {
 
     public void setController(Controller controller) {
         this.controller = controller;
-    }
-
-    public Engine getEngine() {
-        return engine;
-    }
-
-    public void addEngine(Engine engine) {
-        this.engine = engine;
     }
 
     public int getMaxHealth() {

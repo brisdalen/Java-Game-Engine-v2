@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Block extends Entity implements Drawable {
 
-    private BufferedImage texture;
+    protected transient BufferedImage texture;
 
     public Block(int x, int y) {
         this(x, y, "res/block-default.png");
@@ -29,8 +29,19 @@ public class Block extends Entity implements Drawable {
         }
     }
 
+    public void setTexture(String texturePath) {
+        try {
+            this.texture = ImageUtility.resize(ImageIO.read(new File(texturePath)), this.width, this.height);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void draw(Graphics g) {
+        if(texture == null) {
+            setTexture("res/block-default.png");
+        }
         g.drawImage(texture, x, y, null);
     }
 }

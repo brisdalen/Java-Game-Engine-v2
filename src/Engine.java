@@ -8,6 +8,7 @@ import java.util.TimerTask;
 
 public class Engine extends Timer {
     public ArrayList<Entity> entities;
+    private ArrayList<Entity> previouslyRequestedEntities;
 
     public Window.DrawPanel drawPanel;
     public Player player;
@@ -30,59 +31,62 @@ public class Engine extends Timer {
 
     /**
      *
-     * @param drawPanel The panel to update and repaint.
      * @param player The player to affect and get movement from.
      */
-    public Engine(Window.DrawPanel drawPanel, Player player) {
-        this(drawPanel, player, false);
+    public Engine(Player player) {
+        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, false, true);
     }
 
     /**
      *
-     * @param drawPanel The panel to update and repaint.
      * @param player The player to affect and get movement from. (TODO: Multiplayer solution?)
      * @param beforeStart Should the player be able to move before the start method has been called.
      */
-    public Engine(Window.DrawPanel drawPanel, Player player, boolean beforeStart) {
-        this(drawPanel, player, beforeStart, false);
+    public Engine(Player player, boolean beforeStart) {
+        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, beforeStart, false);
     }
     /**
      *
-     * @param drawPanel The panel to update and repaint.
      * @param player The player to affect and get movement from. (TODO: Multiplayer solution?)
      * @param beforeStart Should the player be able to move before the start method has been called.
      * @param gravity Should gravity be activated by default
      */
-    public Engine(Window.DrawPanel drawPanel, Player player, boolean beforeStart, boolean gravity) {
-        entities = new ArrayList<>();
+    public Engine(Player player, boolean beforeStart, boolean gravity) {
+        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, beforeStart, gravity);
+    }
 
-        this.drawPanel = drawPanel;
-        this.currentWindowWidth = drawPanel.getWidth();
-        this.currentWindowHeight = drawPanel.getHeight();
+    public Engine(Player player, int drawPanelWidth, int drawPanelHeight, boolean beforeStart, boolean gravity) {
+        entities = new ArrayList<>();
+        previouslyRequestedEntities = new ArrayList<>();
+
+        this.currentWindowWidth = drawPanelWidth;
+        this.currentWindowHeight = drawPanelHeight;
         this.randomer = new Random();
         this.gravity = gravity;
 
         this.player = player;
-        player.addEngine(this);
         player.setKinematic(gravity);
 
         entities.add(player);
 
-        entities.add(new Block(0, drawPanel.getHeight()-100));
-        entities.add(new Block(50, drawPanel.getHeight()-100));
-        entities.add(new Block(100, drawPanel.getHeight()-100));
+        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
+        entities.add(new Block(50, Window.CANVAS_HEIGHT-100));
+        entities.add(new Block(100, Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(150, drawPanel.getHeight()-100));
-        entities.add(new SolidBlock(200, drawPanel.getHeight()-100));
-        entities.add(new SolidBlock(250, drawPanel.getHeight()-100));
-        entities.add(new SolidBlock(370, drawPanel.getHeight()-100));
+        entities.add(new SolidBlock(150, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(200, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(250, Window.CANVAS_HEIGHT-100));
+
+        entities.add(new SolidBlock(370, Window.CANVAS_HEIGHT-100));
+
+        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));
 
         init(beforeStart);
     }
 
     public void init(boolean beforeStart) {
         running = true;
-        System.out.println(gravity);
+        System.out.println("Gravity: " + gravity);
         /**
          * Get player input and check for out-of-bounds before the start method has been called.
          */
@@ -208,8 +212,6 @@ public class Engine extends Timer {
             stop();
         }
 
-        drawPanel.repaint(getBigClipX1(), getBigClipY1(),
-                getBigClipX2(), getBigClipY2());
     }
 
     /*
@@ -275,20 +277,12 @@ public class Engine extends Timer {
         return player;
     }
 
-    public ArrayList<Entity> getEntities() {
+    public ArrayList<Entity> requestEntities() {
+        previouslyRequestedEntities = entities;
         return entities;
     }
 
-    public int getBigClipX1() {
-        return player.getX() - player.getWidth()*2;
-    }
-    public int getBigClipX2() {
-        return player.getWidth()*6;
-    }
-    public int getBigClipY1() {
-        return player.getY() - player.getHeight()*2;
-    }
-    public int getBigClipY2() {
-        return player.getHeight()*6;
+    public ArrayList<Entity> getEntities() {
+        return entities;
     }
 }

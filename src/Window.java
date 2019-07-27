@@ -22,9 +22,21 @@ public class Window extends JFrame {
     private Player player;
 
     private Font font;
-    private Engine engine;
+
+    private ArrayList<Entity> entities;
 
     public Window() {
+        this(new Player(Window.CANVAS_WIDTH / 2 - 10, Window.CANVAS_HEIGHT / 2 - 10, 20, 20));
+    }
+
+    public Window(Player player) {
+        this(player, new ArrayList<Entity>());
+    }
+
+    public Window(Player player, ArrayList<Entity> entities) {
+        this.player = player;
+        this.entities = entities;
+
         setResizable(false);
 
         startGameButton = new JButton("Start the game!");
@@ -56,26 +68,23 @@ public class Window extends JFrame {
         currentWindowWidth = drawPanel.getWidth();
         currentWindowHeight = drawPanel.getHeight();
 
-        engine = new Engine(drawPanel,
-                new Player(CANVAS_WIDTH / 2 - 10, CANVAS_HEIGHT / 2 - 10, 20, 20), true, true);
-
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         ge.getAllFonts();
 
         font = new Font("SukhumvitSet-Thin", Font.PLAIN, 35);
 
-        addKeyListener(engine.getPlayer().getController());
+        addKeyListener(player.getController());
 
-        addComponentListener(new ComponentAdapter() {
+        /*addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 Rectangle r = getBounds();
                 currentWindowWidth = r.width;
                 currentWindowHeight = r.height;
             }
-        });
+        });*/// Ikke i bruk
 
-        engine.loadLevel("../level1.txt");
+        //engine.loadLevel("../level1.txt");
 
         setVisible(true);
         requestFocus();
@@ -89,13 +98,26 @@ public class Window extends JFrame {
      */
     public Window(int locationX, int locationY) {
         this();
+
         setLocation(locationX, locationY);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setEntities(ArrayList<Entity> entities) {
+        this.entities = entities;
+        if(entities == null) {
+            throw new NullPointerException("No entities returned.");
+        }
     }
 
     public void startGame(JButton button) {
         System.out.println("Game has started.");
         button.setEnabled(false);
-        engine.start();
+        drawPanel.repaint();
+        //engine.start();
         requestFocus();
     }
 
@@ -103,7 +125,7 @@ public class Window extends JFrame {
         System.out.println("Game reset");
         this.setVisible(false);
         this.dispose();
-        engine.reset();
+        //engine.reset();
         new Window(this.getX(), this.getY());
     }
 
@@ -127,6 +149,19 @@ public class Window extends JFrame {
          **/
     }
 
+    public int getBigClipX1() {
+        return player.getX() - player.getWidth()*2;
+    }
+    public int getBigClipX2() {
+        return player.getWidth()*6;
+    }
+    public int getBigClipY1() {
+        return player.getY() - player.getHeight()*2;
+    }
+    public int getBigClipY2() {
+        return player.getHeight()*6;
+    }
+
     class DrawPanel extends JPanel {
 
         public Window window;
@@ -136,7 +171,7 @@ public class Window extends JFrame {
         }
 
         public void updateParentFrameButton() {
-            if (engine.getPlayer().getHealth() <= 0) {
+            if (player.getHealth() <= 0) {
                 setButtonToReset(window.startGameButton);
             }
         }
@@ -144,6 +179,9 @@ public class Window extends JFrame {
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
+
+            drawPanel.repaint(getBigClipX1(), getBigClipY1(),
+                    getBigClipX2(), getBigClipY2());
 
             /**
              * Opptimalisere "Death message" ved å sette mest mulig med en gang
@@ -160,25 +198,29 @@ public class Window extends JFrame {
                 first = false;
             }
 
-            for(Entity e : engine.getEntities()) {
+            for(Entity e : entities) {
                 if(e instanceof Drawable && !(e instanceof Player)) {
                     ((Drawable) e).draw(g);
                 }
             }
             // Gjør player-rendering etterpå for å tegne spilleren over andre ting,
             // men det finnes sikkert en bedre z-buffer løsning
-            engine.getPlayer().draw(g);
-            engine.getPlayer().paintHealthbar(g, currentWindowWidth / 23, currentWindowHeight / 17,
+            player.draw(g);
+            player.paintHealthbar(g, currentWindowWidth / 23, currentWindowHeight / 17,
                     currentWindowWidth / 4, currentWindowHeight / 13);
 
             repaint(currentWindowWidth / 23, currentWindowHeight / 17,
                     currentWindowWidth / 4, currentWindowHeight / 13);
 
-            if (engine.getPlayer().getHealth() == 0) {
+            if (player.getHealth() == 0) {
                 g.setColor(Color.black);
                 g.drawString("YOU'RE DEAD.", fontX, fontY);
                 repaint();
             }
+        }
+
+        public DrawPanel getDrawPanel() {
+            return this;
         }
     }
 }
