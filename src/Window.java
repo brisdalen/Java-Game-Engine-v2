@@ -29,6 +29,18 @@ public class Window extends JFrame {
         this(new Player(Window.CANVAS_WIDTH / 2 - 10, Window.CANVAS_HEIGHT / 2 - 10, 20, 20));
     }
 
+    /**
+     * Constructor used when resetting the game. Opens the window in the location of the previous window.
+     *
+     * @param locationX The x-coordinate of the previous window.
+     * @param locationY The y-coordinate of the previous window.
+     */
+    public Window(int locationX, int locationY) {
+        this();
+
+        setLocation(locationX, locationY);
+    }
+
     public Window(Player player) {
         this(player, new ArrayList<Entity>());
     }
@@ -73,8 +85,6 @@ public class Window extends JFrame {
 
         font = new Font("SukhumvitSet-Thin", Font.PLAIN, 35);
 
-        addKeyListener(player.getController());
-
         /*addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -87,19 +97,8 @@ public class Window extends JFrame {
         //engine.loadLevel("../level1.txt");
 
         setVisible(true);
-        requestFocus();
-    }
-
-    /**
-     * Constructor used when resetting the game. Opens the window in the location of the previous window.
-     *
-     * @param locationX The x-coordinate of the previous window.
-     * @param locationY The y-coordinate of the previous window.
-     */
-    public Window(int locationX, int locationY) {
-        this();
-
-        setLocation(locationX, locationY);
+        startGame(startGameButton);
+        requestFocusInWindow();
     }
 
     public Player getPlayer() {

@@ -35,6 +35,8 @@ public class Server {
             System.out.println("Client successfully connected to server.");
             String inputLine, outputLine;
 
+            engine.start();
+
             /* How to do the same above, but with lambda
             Thread inputProcessing = new Thread(() -> {
                 System.out.println("processing input");

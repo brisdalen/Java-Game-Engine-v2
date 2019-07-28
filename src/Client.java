@@ -8,20 +8,23 @@ import java.util.ArrayList;
 
 public class Client {
 
-    Player player;
-    Window window;
+    private Player player;
+    private Controller controller;
+    private Window window;
 
-    Socket clientSocket;
+    private Socket clientSocket;
 
-    DataOutputStream out;
-    DataInputStream in;
+    private DataOutputStream out;
+    private DataInputStream in;
 
-    ObjectOutputStream objectOut;
-    ObjectInputStream objectIn;
+    private ObjectOutputStream objectOut;
+    private ObjectInputStream objectIn;
 
-    BufferedReader stdIn;
+    private BufferedReader stdIn;
 
-    ArrayList<Entity> entities;
+    private ArrayList<Entity> entities;
+
+    PlayerInputThread playerInputThread;
 
     public Client(String hostName, int port) {
 
@@ -38,9 +41,14 @@ public class Client {
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
             player = new Player(Window.CANVAS_WIDTH / 2 - 10, Window.CANVAS_HEIGHT / 2 - 10, 20, 20);
+            controller = new Controller(player);
             window = new Window(player);
+            window.addKeyListener(controller);
 
+            playerInputThread = new PlayerInputThread(controller);
             window.setEntities(requestEntities());
+            playerInputThread.setRunning(true);
+            playerInputThread.start();
 
             String userInput;
             //while ((userInput = stdIn.readLine()) != null) {
@@ -50,19 +58,19 @@ public class Client {
 
                 // Lage maps med kommandoer??
                 if(userInput.trim().equalsIgnoreCase("bye")) {
+                    playerInputThread.setRunning(false);
                     break;
                 } else if(userInput.trim().equalsIgnoreCase("req_ent()")) {
                     entities = requestEntities();
-                    break;
+                } else {
+                    System.out.println("Trying to write...");
+                    out.writeUTF(userInput);
+
+                    // Read the server data and do things accordingly.
+                    //TODO: figure this out
+                    String result = in.readUTF();
+                    System.out.println("recieved from server: " + result + "\n");
                 }
-
-                System.out.println("Trying to write...");
-                out.writeUTF(userInput);
-
-                // Read the server data and do things accordingly.
-                //TODO: figure this out
-                String result = in.readUTF();
-                System.out.println("recieved from server: " + result + "\n");
             }
 
         } catch (UnknownHostException e) {
@@ -81,7 +89,6 @@ public class Client {
             out.writeUTF("REQ_ENT()");
             System.out.println("Waiting for requested entities.");
             ArrayList<Entity> entitiesReceived = (ArrayList<Entity>) objectIn.readObject();
-            System.out.println("List of entiteis recieved of size: " + entitiesReceived.size());
             in.readUTF();
             return entitiesReceived;
 

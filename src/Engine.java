@@ -10,7 +10,6 @@ public class Engine extends Timer {
     public ArrayList<Entity> entities;
     private ArrayList<Entity> previouslyRequestedEntities;
 
-    public Window.DrawPanel drawPanel;
     public Player player;
     public int currentWindowWidth;
     public int currentWindowHeight;
@@ -55,12 +54,12 @@ public class Engine extends Timer {
         this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, beforeStart, gravity);
     }
 
-    public Engine(Player player, int drawPanelWidth, int drawPanelHeight, boolean beforeStart, boolean gravity) {
+    public Engine(Player player, int windowWidth, int windowHeight, boolean beforeStart, boolean gravity) {
         entities = new ArrayList<>();
         previouslyRequestedEntities = new ArrayList<>();
 
-        this.currentWindowWidth = drawPanelWidth;
-        this.currentWindowHeight = drawPanelHeight;
+        this.currentWindowWidth = windowWidth;
+        this.currentWindowHeight = windowHeight;
         this.randomer = new Random();
         this.gravity = gravity;
 
@@ -95,7 +94,7 @@ public class Engine extends Timer {
                 @Override
                 public void run() {
                     if (!hasLost && !hasStarted) {
-                        checkPlayer(player, drawPanel);
+                        checkPlayer(player);
                         if(gravity) {
                             playerGravity();
                         }
@@ -116,14 +115,15 @@ public class Engine extends Timer {
             @Override
             public void run() {
                 if(!hasLost) {
-                    checkPlayer(player, drawPanel);
+                    checkPlayer(player);
                     if(gravity) {
                         playerGravity();
                     }
                 }
                 //If you lost, and resetPrompt has not been displayed yet
                 if(hasLost && !resetPrompt) {
-                    drawPanel.updateParentFrameButton();
+                    // TODO: Figure out how to update the button?
+                    //drawPanel.updateParentFrameButton();
                     resetPrompt = true;
                     this.cancel();
                 }
@@ -134,7 +134,7 @@ public class Engine extends Timer {
             @Override
             public void run() {
                 if(!hasLost) {
-                    System.out.println(totalTime);
+                    //System.out.println(totalTime);
                     totalTime++;
 
                     if (totalTime % 10 == 0 && totalTime >= 0) {
@@ -188,7 +188,7 @@ public class Engine extends Timer {
     Collision
      */
 
-    private void checkPlayer(Player player, Window.DrawPanel drawPanel) {
+    private void checkPlayer(Player player) {
         getPlayerInputs();
 
         int x = player.getX();
@@ -218,8 +218,10 @@ public class Engine extends Timer {
      *  Player input
      */
     public void getPlayerInputs() {
+        /* TODO: Refactor player-input to work through socket
         if(player.getController().left) {
             player.changeDirection(0);
+            System.out.println("left");
             newPos = new Point(player.getX() - player.getMovementSpeed(), player.getY());
             if(!checkPlayerCollision(newPos)) {
                 player.setX(newPos.x);
@@ -250,8 +252,8 @@ public class Engine extends Timer {
             // Instantly kill the player
             player.setHealth(0);
             stop();
-            drawPanel.updateParentFrameButton();
-        }
+            //drawPanel.updateParentFrameButton();
+        }*/
     }
 
     private void playerGravity() {

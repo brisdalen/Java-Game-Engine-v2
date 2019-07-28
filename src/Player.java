@@ -13,7 +13,6 @@ public class Player extends Entity implements Drawable {
     private int movementSpeedStart = 4;
     private int movementSpeed = 4;
     // Is this bad coupling?
-    private Controller controller;
     private int maxHealth = 1000;
 
     private Rectangle src;
@@ -45,7 +44,6 @@ public class Player extends Entity implements Drawable {
         this.height = height;
         this.color = color;
         this.isKinematic = isKinematic;
-        this.controller = new Controller(this);
 
         if(health > maxHealth) {
             health = maxHealth;
@@ -165,14 +163,6 @@ public class Player extends Entity implements Drawable {
 
     public void setMovementSpeed(int movementSpeed) {
         this.movementSpeed = movementSpeed;
-    }
-
-    public Controller getController() {
-        return controller;
-    }
-
-    public void setController(Controller controller) {
-        this.controller = controller;
     }
 
     public int getMaxHealth() {

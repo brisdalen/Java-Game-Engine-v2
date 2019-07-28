@@ -2,7 +2,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.Serializable;
-
+//TODO: Look into key bindings instead of key listener
 public class Controller implements KeyListener, Serializable {
 
     private Player player;
