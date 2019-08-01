@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.Serializable;
 
 public abstract class Entity implements Serializable {
@@ -28,6 +29,15 @@ public abstract class Entity implements Serializable {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Point getPosition() {
+        return new Point(x, y);
+    }
+
+    public void setPosition(Point newPosition) {
+        setX(newPosition.x);
+        setY(newPosition.y);
     }
 
     public int getWidth() {

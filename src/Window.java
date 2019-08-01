@@ -161,6 +161,10 @@ public class Window extends JFrame {
         return player.getHeight()*6;
     }
 
+    public DrawPanel getDrawPanel() {
+        return drawPanel.getDrawPanel();
+    }
+
     class DrawPanel extends JPanel {
 
         public Window window;

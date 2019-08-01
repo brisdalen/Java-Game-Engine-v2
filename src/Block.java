@@ -40,6 +40,7 @@ public class Block extends Entity implements Drawable {
     @Override
     public void draw(Graphics g) {
         if(texture == null) {
+            System.out.println("Block texture sat");
             setTexture("res/block-default.png");
         }
         g.drawImage(texture, x, y, null);

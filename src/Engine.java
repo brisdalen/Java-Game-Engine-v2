@@ -7,22 +7,23 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Engine extends Timer {
-    public ArrayList<Entity> entities;
+    private ArrayList<Entity> entities;
     private ArrayList<Entity> previouslyRequestedEntities;
 
-    public Player player;
-    public int currentWindowWidth;
-    public int currentWindowHeight;
-    public Random randomer;
-    public int startTime = -20;
-    public int totalTime = startTime;
+    private Player player;
+    private Point previousPlayerPosition;
+    private int currentWindowWidth;
+    private int currentWindowHeight;
+    private Random randomer;
+    private int startTime = -20;
+    private int totalTime = startTime;
 
     private boolean gravity = false;
 
-    public boolean running = false;
-    public boolean hasStarted = false;
-    public static boolean hasLost = false;
-    public boolean resetPrompt = false;
+    private boolean running = false;
+    private boolean hasStarted = false;
+    private static boolean hasLost = false;
+    private boolean resetPrompt = false;
 
     public static final float GRAVITY = 2f;
 
@@ -66,9 +67,9 @@ public class Engine extends Timer {
         this.player = player;
         player.setKinematic(gravity);
 
-        entities.add(player);
+        //entities.add(player);
 
-        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
+/*        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
         entities.add(new Block(50, Window.CANVAS_HEIGHT-100));
         entities.add(new Block(100, Window.CANVAS_HEIGHT-100));
 
@@ -78,7 +79,7 @@ public class Engine extends Timer {
 
         entities.add(new SolidBlock(370, Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));*/
 
         init(beforeStart);
     }
@@ -280,6 +281,11 @@ public class Engine extends Timer {
     }
 
     public ArrayList<Entity> requestEntities() {
+        System.out.println("Entities requested.");
+        if(player.getX() > 460) {
+            System.out.println("spawning entity");
+            entities.add(new SolidBlock(500 + randomer.nextInt(Window.CANVAS_WIDTH - 500), Window.CANVAS_HEIGHT-100));
+        }
         previouslyRequestedEntities = entities;
         return entities;
     }

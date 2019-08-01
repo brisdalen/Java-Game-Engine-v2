@@ -192,16 +192,19 @@ public class Player extends Entity implements Drawable {
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(x, y, width, height);
-
+        // left
         if(direction == 0) {
             g.fillRect(x-width, y+(height/4), width, width/2);
         }
+        // up
         if(direction == 1) {
             g.fillRect(x+(width/4), y-height, width/2, width);
         }
+        // right
         if(direction == 2) {
             g.fillRect(x+width, y+(height/4), width, width/2);
         }
+        // down
         if(direction == 3) {
             g.fillRect(x+(width/4), y+height, width/2, width);
         }
