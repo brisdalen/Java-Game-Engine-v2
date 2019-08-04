@@ -10,8 +10,8 @@ public class Player extends Entity implements Drawable {
     private int direction = 2; // 0 = left, 1 = up, 2 = right, 3 = down
     private int startHealth = 1000;
     private int health = startHealth;
-    private int movementSpeedStart = 4;
-    private int movementSpeed = 4;
+    private int movementSpeedStart = 6;
+    private int movementSpeed = 6;
     // Is this bad coupling?
     private int maxHealth = 1000;
 
@@ -51,19 +51,20 @@ public class Player extends Entity implements Drawable {
     }
 
     public boolean isCollidingWithNewPos(Point newPos, ArrayList<Entity> entities) {
-        boolean hit = false;
         for(int i = 0; i < entities.size(); i++) {
+            // Check every entity in the list given
             Entity e = entities.get(i);
+            // If it's an instance of a SolidBlock,
             if(e instanceof SolidBlock) {
                 src = new Rectangle(newPos.x, newPos.y, this.width, this.height);
                 Rectangle other = new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-
+                // then return true if it intersects with the bounds of the SolidBlock.
                 if(src.intersects(other)) {
                     return true;
                 }
             }
         }
-
+        // Otherwise return false.
         return false;
     }
 

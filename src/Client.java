@@ -75,9 +75,7 @@ public class Client {
 
     private ArrayList<Entity> requestEntities() {
         try {
-            //System.out.println("Attempting to request entities.");
             out.writeUTF("REQ_ENT()");
-            //System.out.println("Waiting for requested entities.");
             ArrayList<Entity> entitiesReceived = (ArrayList<Entity>) objectIn.readObject();
             in.readUTF();
             return entitiesReceived;

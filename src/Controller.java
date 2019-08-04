@@ -35,46 +35,42 @@ public class Controller implements KeyListener, Serializable {
         }
         if(e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_W) {
             up = true;
-            client.sendMessage("MOV(0,-2)");
-            client.updatePlayerPosition();
         }
         if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D) {
             right = true;
-            client.sendMessage("MOV(2,0)");
-            client.updatePlayerPosition();
         }
         if(e.getKeyCode() == KeyEvent.VK_DOWN || e.getKeyCode() == KeyEvent.VK_S) {
             down = true;
-            client.sendMessage("MOV(0,2)");
-            client.updatePlayerPosition();
         }
+        /*
+        if(player.getController().left) {
+            player.changeDirection(0);
+            System.out.println("left");
+            newPos = new Point(player.getX() - player.getMovementSpeed(), player.getY());
+            if(!checkPlayerCollision(newPos)) {
+                player.setX(newPos.x);
+            }
+        }
+        */
         // Sending movement info to the server
         if(left) {
-            client.sendMessage("MOV(-2,0)");
-            client.updatePlayerPosition();
-        }
-        if(left && up) {
-            client.sendMessage("MOV(-2,-2)");
+            player.changeDirection(0);
+            client.sendMessage("MOV(" + -player.getMovementSpeed() + ",0)");
             client.updatePlayerPosition();
         }
         if(up) {
-            client.sendMessage("MOV(0,-2)");
-            client.updatePlayerPosition();
-        }
-        if(up && right) {
-            client.sendMessage("MOV(2,-2)");
+            player.changeDirection(1);
+            client.sendMessage("MOV(0," + -player.getMovementSpeed() + ")");
             client.updatePlayerPosition();
         }
         if(right) {
-            client.sendMessage("MOV(2,0)");
-            client.updatePlayerPosition();
-        }
-        if(right && down) {
-            client.sendMessage("MOV(2,2)");
+            player.changeDirection(2);
+            client.sendMessage("MOV(" + player.getMovementSpeed() + ",0)");
             client.updatePlayerPosition();
         }
         if(down) {
-            client.sendMessage("MOV(0,2)");
+            player.changeDirection(3);
+            client.sendMessage("MOV(0," + player.getMovementSpeed() + ")");
             client.updatePlayerPosition();
         }
 

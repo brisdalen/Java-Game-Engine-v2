@@ -69,7 +69,7 @@ public class Engine extends Timer {
 
         //entities.add(player);
 
-/*        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
+        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
         entities.add(new Block(50, Window.CANVAS_HEIGHT-100));
         entities.add(new Block(100, Window.CANVAS_HEIGHT-100));
 
@@ -79,7 +79,7 @@ public class Engine extends Timer {
 
         entities.add(new SolidBlock(370, Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));*/
+        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));
 
         init(beforeStart);
     }
@@ -224,7 +224,9 @@ public class Engine extends Timer {
             player.changeDirection(0);
             System.out.println("left");
             newPos = new Point(player.getX() - player.getMovementSpeed(), player.getY());
+            // If the player does not collide with anything on the new position
             if(!checkPlayerCollision(newPos)) {
+                // Set the player to this new position
                 player.setX(newPos.x);
             }
         }
@@ -270,6 +272,17 @@ public class Engine extends Timer {
 
     private boolean checkPlayerCollision(Point newPos) {
         return player.isCollidingWithNewPos(newPos, entities);
+    }
+
+    public Point requestNewPlayerPosition(Point newPos) {
+        Point oldPos = player.getPosition();
+        // If the player does not collide with anything on the new position
+        if(!checkPlayerCollision(newPos)) {
+            // Set the player to this new position
+            return newPos;
+        }
+
+        return oldPos;
     }
 
     public void win() {

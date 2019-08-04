@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -24,9 +26,18 @@ public class Server {
 
     public Server(int port, Engine engine) throws IOException {
 
+        JButton closeButton = new JButton("Close server");
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                close();
+            }
+        });
+
         frame = new JFrame("Java game engine server");
         frame.setSize(300, 100);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(closeButton, BorderLayout.CENTER);
 
         addEngine(engine);
         frame.setVisible(true);
@@ -59,8 +70,7 @@ public class Server {
                 }
 
                 System.out.println("Client input: " + inputLine);
-                outputLine = inputLine;
-
+                
                 // Calculate movements
                 // Return info for graphics
                 outputLine = processInput(inputLine);
@@ -94,8 +104,10 @@ public class Server {
                 Player player = engine.getPlayer();
                 int x = Integer.parseInt(input.substring(leftPar+1, comma));
                 int y = Integer.parseInt(input.substring(comma+1, input.length()-1));
-                player.setX(player.getX() + x);
-                player.setY(player.getY() + y);
+                // Request a new position from the engine, but do local physics on client-side
+                Point newPos = engine.requestNewPlayerPosition(new Point(player.getX() + x, player.getY() + y));
+                player.setX(newPos.x);
+                player.setY(newPos.y);
                 System.out.println(player.getX());
                 output = "x: " + x + "\n" + "y: " + y;
                 break;
@@ -121,8 +133,9 @@ public class Server {
     private void sendEntities() {
         try {
             ArrayList<Entity> entities = engine.requestEntities();
-            System.out.println(entities.size());
+            System.out.println("Entities sent: " + entities.size());
             objectOut.writeObject(entities);
+            // objectOut.flush(); Does not fix the problem
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -151,6 +164,8 @@ public class Server {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
+
+        System.exit(0);
     }
 
     public void addEngine(Engine engine) {
