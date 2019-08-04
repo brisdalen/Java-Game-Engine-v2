@@ -118,6 +118,8 @@ public class Client {
 
     private void updateEntities() {
         window.setEntities(requestEntities());
+        // TODO: Burde begrense repaintinga til områder på skjermen det gjelder, kanskje bare ved å passe entities?
+        window.getDrawPanel().repaint();
     }
 
     private void exit() {

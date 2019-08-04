@@ -70,7 +70,7 @@ public class Server {
                 }
 
                 System.out.println("Client input: " + inputLine);
-                
+
                 // Calculate movements
                 // Return info for graphics
                 outputLine = processInput(inputLine);
@@ -133,9 +133,9 @@ public class Server {
     private void sendEntities() {
         try {
             ArrayList<Entity> entities = engine.requestEntities();
+            ArrayList<Entity> copy = new ArrayList<>(entities);
             System.out.println("Entities sent: " + entities.size());
-            objectOut.writeObject(entities);
-            // objectOut.flush(); Does not fix the problem
+            objectOut.writeObject(copy);
         } catch (IOException e) {
             e.printStackTrace();
         }
