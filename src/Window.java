@@ -18,6 +18,7 @@ public class Window extends JFrame {
 
     public JButton startGameButton;
 
+    private Timer renderTimer;
     private DrawPanel drawPanel;
     private Player player;
 
@@ -46,6 +47,8 @@ public class Window extends JFrame {
     }
 
     public Window(Player player, ArrayList<Entity> entities) {
+        renderTimer = new Timer();
+
         this.player = player;
         this.entities = entities;
 
@@ -97,6 +100,15 @@ public class Window extends JFrame {
         //engine.loadLevel("../level1.txt");
 
         setVisible(true);
+
+        renderTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                drawPanel.repaint(getBigClip());
+                //drawPanel.repaint();
+            }
+        }, 0, 40);
+
         startGame(startGameButton);
         requestFocusInWindow();
     }
@@ -140,12 +152,6 @@ public class Window extends JFrame {
             }
         });
         button.setEnabled(true);
-        /**TODO: Add code to reset window
-         *  - Endre ActionPerformed hos startGame ved reset
-         *  - Set player to the centre
-         *  - Clear all healpods and spawn 1 in the centre
-         *  - Clear all lazers
-         **/
     }
 
     public int getBigClipX1() {
@@ -159,6 +165,9 @@ public class Window extends JFrame {
     }
     public int getBigClipY2() {
         return player.getHeight()*6;
+    }
+    public Rectangle getBigClip() {
+        return new Rectangle(getBigClipX1(), getBigClipY1(), getBigClipX2(), getBigClipY2());
     }
 
     public DrawPanel getDrawPanel() {

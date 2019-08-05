@@ -260,13 +260,9 @@ public class Engine extends Timer {
     }
 
     private void playerGravity() {
-        for(Entity e : entities) {
-            if(e.isKinematic) {
-                Point newPos = new Point(player.getX(), player.getY() + (int) GRAVITY);
-                if(!checkPlayerCollision(newPos)) {
-                    player.setY(newPos.y);
-                }
-            }
+        Point newPos = new Point(player.getX(), player.getY() + (int) GRAVITY);
+        if(!checkPlayerCollision(newPos)) {
+            player.setY(newPos.y);
         }
     }
 
