@@ -1,3 +1,7 @@
+import Enteties.Entity;
+import Enteties.Player;
+import Logic.Engine;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

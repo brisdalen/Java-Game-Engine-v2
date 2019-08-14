@@ -1,3 +1,5 @@
+package Enteties;
+
 import java.awt.*;
 
 public class SolidBlock extends Block {

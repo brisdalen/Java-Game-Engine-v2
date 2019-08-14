@@ -1,7 +1,8 @@
-import javax.swing.*;
+import Enteties.Player;
+import Logic.Engine;
+import Rendering.Window;
+
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Main {
 
@@ -25,8 +26,8 @@ public class Main {
         /*SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Window();
-                System.out.println("Window created.");
+                new Rendering.Window();
+                System.out.println("Rendering.Window created.");
             }
         });*/
     }

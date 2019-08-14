@@ -1,6 +1,15 @@
-import javax.swing.text.Position;
+package Logic;
+
+import Enteties.Block;
+import Enteties.Entity;
+import Enteties.Player;
+import Enteties.SolidBlock;
+import LevelParsing.Level;
+import LevelParsing.LevelParser;
+import Rendering.Window;
+
 import java.awt.*;
-import java.lang.reflect.Array;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -12,9 +21,14 @@ public class Engine extends Timer {
 
     private Player player;
     private Point previousPlayerPosition;
+    private LevelParser levelParser;
+    private Level level;
+    private Level currentLevel;
+    private Random randomer;
+    public static final int SCALE_FACTOR = 25;
+
     private int currentWindowWidth;
     private int currentWindowHeight;
-    private Random randomer;
     private int startTime = -20;
     private int totalTime = startTime;
 
@@ -34,7 +48,7 @@ public class Engine extends Timer {
      * @param player The player to affect and get movement from.
      */
     public Engine(Player player) {
-        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, false, true);
+        this(player, Rendering.Window.CANVAS_WIDTH, Rendering.Window.CANVAS_HEIGHT, false, true);
     }
 
     /**
@@ -43,7 +57,7 @@ public class Engine extends Timer {
      * @param beforeStart Should the player be able to move before the start method has been called.
      */
     public Engine(Player player, boolean beforeStart) {
-        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, beforeStart, false);
+        this(player, Window.CANVAS_WIDTH, Rendering.Window.CANVAS_HEIGHT, beforeStart, false);
     }
     /**
      *
@@ -52,10 +66,11 @@ public class Engine extends Timer {
      * @param gravity Should gravity be activated by default
      */
     public Engine(Player player, boolean beforeStart, boolean gravity) {
-        this(player, Window.CANVAS_WIDTH, Window.CANVAS_HEIGHT, beforeStart, gravity);
+        this(player, Rendering.Window.CANVAS_WIDTH, Rendering.Window.CANVAS_HEIGHT, beforeStart, gravity);
     }
 
     public Engine(Player player, int windowWidth, int windowHeight, boolean beforeStart, boolean gravity) {
+
         entities = new ArrayList<>();
         previouslyRequestedEntities = new ArrayList<>();
 
@@ -64,22 +79,32 @@ public class Engine extends Timer {
         this.randomer = new Random();
         this.gravity = gravity;
 
+        levelParser = new LevelParser();
+        //level = levelParser.parseLevelFromImage("levels/level_3.png");
+        //currentLevel = level;
+        //loadLevel(currentLevel);
+
+        level = levelParser.parseLevelFromImage("levels/level_4.png");
+        currentLevel = level;
+        loadLevel(currentLevel);
+
         this.player = player;
         player.setKinematic(gravity);
 
         //entities.add(player);
 
-        entities.add(new Block(0, Window.CANVAS_HEIGHT-100));
-        entities.add(new Block(50, Window.CANVAS_HEIGHT-100));
-        entities.add(new Block(100, Window.CANVAS_HEIGHT-100));
+        /*entities.add(new Block(0, Rendering.Window.CANVAS_HEIGHT-100));
+        entities.add(new Block(50, Rendering.Window.CANVAS_HEIGHT-100));
+        entities.add(new Block(100, Rendering.Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(150, Window.CANVAS_HEIGHT-100));
-        entities.add(new SolidBlock(200, Window.CANVAS_HEIGHT-100));
-        entities.add(new SolidBlock(250, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(150, Rendering.Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(200, Rendering.Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(250, Rendering.Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(370, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(370, Rendering.Window.CANVAS_HEIGHT-100));
 
-        entities.add(new SolidBlock(490, Window.CANVAS_HEIGHT-100));
+        entities.add(new SolidBlock(490, Rendering.Window.CANVAS_HEIGHT-100));
+        */
 
         init(beforeStart);
     }
@@ -151,7 +176,7 @@ public class Engine extends Timer {
     }
 
     public void reset() {
-        System.out.println("Engine RESET");
+        System.out.println("Logic.Engine RESET");
         /* TODO: Add code to reset engine
          *  - husk på forskjell på STOP og RESET
          *  - ny thread med totalTime ved hver reset?
@@ -164,12 +189,10 @@ public class Engine extends Timer {
 
         running = true;
 
-        //spawnNewHealpod(currentWindowWidth/2-20, currentWindowHeight/2-20);
-
     }
 
     public void stop() {
-        System.out.println("Engine STOP");
+        System.out.println("Logic.Engine STOP");
         hasLost = true;
         running = false;
         //hasStarted = false;
@@ -179,18 +202,66 @@ public class Engine extends Timer {
         //TODO: Lage metode for å lagre levels
     }
 
-    public void loadLevel(String path) {
+    public void loadLevel(Level level) {
+        int scale = SCALE_FACTOR;
         //TODO: Lage metode for å loade levels
-        System.out.println("engine load: " + path.substring(path.indexOf("/")+1, path.length()-4));
+        if(level.getImage() == null) {
+            String levelDetails = level.getLevelDetails();
+            levelDetails = levelDetails.replace(System.getProperty("line.separator"), "");
+            int levelWidth = level.getWidth();
+            int y = 0;
+
+            for(int x = 0; x < levelDetails.length(); x++) {
+
+                if(x > 0 && x % levelWidth == 0) {
+                    y++;
+                }
+
+                switch(levelDetails.charAt(x)) {
+                    case 'X':
+                        entities.add(new SolidBlock((x % levelWidth) * scale, y * scale));
+                        break;
+
+                    case 'O':
+                        // The default thing to do
+                        break;
+                }
+            }
+        } else {
+
+            BufferedImage image = level.getImage();
+            int levelWidth = level.getWidth();
+            int levelHeight = level.getHeight();
+
+            for(int y = 0; y < levelHeight; y++) {
+                for(int x = 0; x < levelWidth; x++) {
+                    int p = image.getRGB(x, y);
+                    // Get the pixel values
+                    int a = (p>>24) & 0xff;
+                    int r = (p>>16) & 0xff;
+                    int gee = (p>>8) & 0xff;
+                    int b = p & 0xff;
+                    //set the pixel value
+                    //p = (a<<24) | (r<<16) | (g<<8) | b;
+                    if(a == 255 && r == 0 && gee == 0 && b == 0) {
+                        entities.add(new SolidBlock(x * scale, y * scale));
+                    } else if(a == 255 && r == 255 && gee == 0 && b == 0) {
+                        entities.add(new Block(x * scale, y * scale));
+                    } else {
+                        // The default thing to do
+                    }
+                }
+            }
+
+        }
     }
 
     /*
-    Player input
+    Enteties.Player input
     Collision
      */
 
     private void checkPlayer(Player player) {
-        getPlayerInputs();
 
         int x = player.getX();
         int y = player.getY();
@@ -213,50 +284,6 @@ public class Engine extends Timer {
             stop();
         }
 
-    }
-
-    /*
-     *  Player input
-     */
-    public void getPlayerInputs() {
-        /* TODO: Refactor player-input to work through socket
-        if(player.getController().left) {
-            player.changeDirection(0);
-            System.out.println("left");
-            newPos = new Point(player.getX() - player.getMovementSpeed(), player.getY());
-            // If the player does not collide with anything on the new position
-            if(!checkPlayerCollision(newPos)) {
-                // Set the player to this new position
-                player.setX(newPos.x);
-            }
-        }
-        if(player.getController().up) {
-            player.changeDirection(1);
-            newPos = new Point(player.getX(), player.getY() - player.getMovementSpeed());
-            if(!checkPlayerCollision(newPos)) {
-                player.setY(newPos.y);
-            }
-        }
-        if(player.getController().right) {
-            player.changeDirection(2);
-            newPos = new Point(player.getX() + player.getMovementSpeed(), player.getY());
-            if(!checkPlayerCollision(newPos)) {
-                player.setX(newPos.x);
-            }
-        }
-        if(player.getController().down) {
-            player.changeDirection(3);
-            newPos = new Point(player.getX(), player.getY() + player.getMovementSpeed());
-            if(!checkPlayerCollision(newPos)) {
-                player.setY(newPos.y);
-            }
-        }
-        if(player.getController().k) {
-            // Instantly kill the player
-            player.setHealth(0);
-            stop();
-            //drawPanel.updateParentFrameButton();
-        }*/
     }
 
     private void playerGravity() {
@@ -293,7 +320,7 @@ public class Engine extends Timer {
         System.out.println("Entities requested.");
         if(player.getX() > 460) {
             System.out.println("spawning entity");
-            entities.add(new SolidBlock(500 + randomer.nextInt(Window.CANVAS_WIDTH - 500), Window.CANVAS_HEIGHT-100));
+            entities.add(new SolidBlock(500 + randomer.nextInt(Rendering.Window.CANVAS_WIDTH - 500), Rendering.Window.CANVAS_HEIGHT-100));
         }
         previouslyRequestedEntities = entities;
         return entities;

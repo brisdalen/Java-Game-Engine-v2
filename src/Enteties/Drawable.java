@@ -1,3 +1,5 @@
+package Enteties;
+
 import java.awt.Graphics;
 
 public interface Drawable {

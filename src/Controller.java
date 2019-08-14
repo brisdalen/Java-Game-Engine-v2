@@ -1,5 +1,5 @@
-import java.awt.*;
-import java.awt.event.KeyAdapter;
+import Enteties.Player;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;

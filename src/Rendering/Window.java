@@ -1,3 +1,9 @@
+package Rendering;
+
+import Enteties.Drawable;
+import Enteties.Entity;
+import Enteties.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,7 +14,7 @@ import java.util.TimerTask;
 public class Window extends JFrame {
 
     public static final int CANVAS_WIDTH = 780;
-    public static final int CANVAS_HEIGHT = 480;
+    public static final int CANVAS_HEIGHT = 480 + 22;
     public int currentWindowWidth;
     public int currentWindowHeight;
     public static final Color CANVAS_BG_COLOR = new Color(120, 80, 120);
@@ -172,6 +178,10 @@ public class Window extends JFrame {
 
     public DrawPanel getDrawPanel() {
         return drawPanel.getDrawPanel();
+    }
+
+    public void repaint() {
+        drawPanel.repaint();
     }
 
     class DrawPanel extends JPanel {

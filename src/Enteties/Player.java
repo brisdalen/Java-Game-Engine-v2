@@ -1,6 +1,6 @@
+package Enteties;
+
 import java.awt.*;
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Player extends Entity implements Drawable {
@@ -54,11 +54,11 @@ public class Player extends Entity implements Drawable {
         for(int i = 0; i < entities.size(); i++) {
             // Check every entity in the list given
             Entity e = entities.get(i);
-            // If it's an instance of a SolidBlock,
+            // If it's an instance of a Enteties.SolidBlock,
             if(e instanceof SolidBlock) {
                 src = new Rectangle(newPos.x, newPos.y, this.width, this.height);
                 Rectangle other = new Rectangle(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-                // then return true if it intersects with the bounds of the SolidBlock.
+                // then return true if it intersects with the bounds of the Enteties.SolidBlock.
                 if(src.intersects(other)) {
                     return true;
                 }

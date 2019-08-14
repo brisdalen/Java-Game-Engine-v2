@@ -1,3 +1,7 @@
+import Enteties.Entity;
+import Enteties.Player;
+import Rendering.Window;
+
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
@@ -33,13 +37,13 @@ public class Client {
 
             stdIn = new BufferedReader(new InputStreamReader(System.in));
 
-            player = new Player(Window.CANVAS_WIDTH / 2 - 10, Window.CANVAS_HEIGHT / 2 - 10, 20, 20);
+            player = new Player(Rendering.Window.CANVAS_WIDTH / 2 - 10, Rendering.Window.CANVAS_HEIGHT / 2 - 10, 20, 20);
             controller = new Controller(this, player);
-            window = new Window(player);
+            window = new Rendering.Window(player);
             window.addKeyListener(controller);
 
             window.setEntities(requestEntities());
-            window.getDrawPanel().repaint();
+            window.repaint();
 
             while(running) {
                 //entities = requestEntities();
@@ -119,7 +123,7 @@ public class Client {
     private void updateEntities() {
         window.setEntities(requestEntities());
         // TODO: Burde begrense repaintinga til områder på skjermen det gjelder, kanskje bare ved å passe entities?
-        window.getDrawPanel().repaint();
+        window.repaint();
     }
 
     private void exit() {
@@ -147,7 +151,7 @@ public class Client {
         return stdIn;
     }
 
-    public Window getWindow() {
+    public Rendering.Window getWindow() {
         return window;
     }
 

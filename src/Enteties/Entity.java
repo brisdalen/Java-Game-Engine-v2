@@ -1,3 +1,5 @@
+package Enteties;
+
 import java.awt.*;
 import java.io.Serializable;
 

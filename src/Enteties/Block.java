@@ -1,8 +1,14 @@
+package Enteties;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import Rendering.Window;
+import Rendering.ImageUtility;
+import Logic.Engine;
 
 public class Block extends Entity implements Drawable {
 
@@ -19,8 +25,8 @@ public class Block extends Entity implements Drawable {
     public Block(int x, int y, String texturePath, boolean isKinematic) {
         this.x = x;
         this.y = y;
-        this.width = 1 * Window.SCALE;
-        this.height = 1 * Window.SCALE;
+        this.width = 1 * Engine.SCALE_FACTOR;
+        this.height = 1 * Engine.SCALE_FACTOR;
         this.isKinematic = isKinematic;
         try {
             this.texture = ImageUtility.resize(ImageIO.read(new File(texturePath)), width, height);
@@ -40,7 +46,7 @@ public class Block extends Entity implements Drawable {
     @Override
     public void draw(Graphics g) {
         if(texture == null) {
-            System.out.println("Block texture sat");
+            System.out.println("Enteties.Block texture sat");
             setTexture("res/block-default.png");
         }
         g.drawImage(texture, x, y, null);
